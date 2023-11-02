@@ -1,0 +1,80 @@
+# This AWS SAM template has been generated from your function's 
+# configuration. If your function has one or more triggers, note 
+# that the AWS resources associated with these triggers aren't fully 
+# specified in this template and include placeholder values.Open this template 
+# in AWS Application Composer or your favorite IDE and modify 
+# it to specify a serverless application with other AWS resources. 
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: An AWS Serverless Specification template describing your function.
+Resources:
+  voicemailtestingmartinezTranscriptionEventsLambd1OphyUjeYOUp:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Description: >
+        AWS Lambda Function that will be triggered when transcription status
+        changes.
+      MemorySize: 1024
+      Timeout: 30
+      Handler: handler/transcription.process
+      Runtime: nodejs16.x
+      Architectures:
+        - x86_64
+      EventInvokeConfig:
+        MaximumEventAgeInSeconds: 21600
+        MaximumRetryAttempts: 2
+      EphemeralStorage:
+        Size: 512
+      Events:
+        EventBridgeRule1:
+          Type: EventBridgeRule
+          Properties:
+            Pattern:
+              detail-type:
+                - Transcribe Job State Change
+              source:
+                - aws.transcribe
+              detail:
+                TranscriptionJobStatus:
+                  - COMPLETED
+                  - FAILED
+      Environment:
+        Variables:
+          AMAZON_CONNECT_INSTANCE_ARN: >-
+            arn:aws:connect:us-east-1:719466145324:instance/4663f3c2-c909-426c-998b-91e3675b5e25
+          AVAILABLE_SMS_COUNTRIES: us,ca
+          CONTACT_VOICEMAIL_TABLE_NAME: >-
+            voicemailtestingmartinez-VoicemailStack-8770G66A8L8N-ContactVoicemailTable-1AL1C6UUB2KS
+          GLOBAL_TABLE_NAME: >-
+            voicemailtestingmartinez-VoicemailStack-8770G66A8L8N-GlobalTable-1JIE8YDI4PTBF
+          SECRET_ARN: >-
+            arn:aws:secretsmanager:us-east-1:719466145324:secret:VoicemailSecret-1FwdyS0Az2CG-Aa7cnO
+          SIGNED_RECORDING_URL_EXP: '900'
+          USERS_TABLE_NAME: >-
+            voicemailtestingmartinez-VoicemailStack-8770G66A8L8N-UsersTable-1FTNKZ6TUKOOO
+      RuntimeManagementConfig:
+        UpdateRuntimeOn: Auto
+      SnapStart:
+        ApplyOn: None
+      PackageType: Zip
+      Policies:
+        Statement:
+          - Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource:
+              - arn:aws:logs:us-east-1:719466145324:log-group:/aws/lambda/*
+            Effect: Allow
+          - Action:
+              - dynamodb:Query
+              - dynamodb:UpdateItem
+            Resource: >-
+              arn:aws:dynamodb:us-east-1:719466145324:table/voicemailtestingmartinez-VoicemailStack-8770G66A8L8N-ContactVoicemailTable-1AL1C6UUB2KS
+            Effect: Allow
+          - Action:
+              - secretsmanager:GetSecretValue
+            Resource: >-
+              arn:aws:secretsmanager:us-east-1:719466145324:secret:VoicemailSecret-1FwdyS0Az2CG-Aa7cnO
+            Effect: Allow

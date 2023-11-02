@@ -1,0 +1,24 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >-
+  CloudFormation template for EventBridge rule
+  'voicemailtestingmartinez--TranscriptionEventsEvents-NSY6v3MMJLcX'
+Resources:
+  EventRule0:
+    Type: AWS::Events::Rule
+    Properties:
+      EventBusName: default
+      EventPattern:
+        detail-type:
+          - Transcribe Job State Change
+        source:
+          - aws.transcribe
+        detail:
+          TranscriptionJobStatus:
+            - COMPLETED
+            - FAILED
+      Name: voicemailtestingmartinez--TranscriptionEventsEvents-NSY6v3MMJLcX
+      State: ENABLED
+      Targets:
+        - Id: TranscriptionEventsCloudWatchEvent
+          Arn: >-
+            arn:aws:lambda:us-east-1:719466145324:function:voicemailtestingmartinez--TranscriptionEventsLambd-1OphyUjeYOUp
